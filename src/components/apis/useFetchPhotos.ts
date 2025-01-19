@@ -1,63 +1,52 @@
 import { useState, useEffect } from "react";
 
 const API_KEY = process.env.REACT_APP_PEXELS_API_KEY as string;
-const BASE_URL = "https://api.pexels.com/v1/search";
 
 export interface Photo {
-  id: number;
-  url: string;
-  photographer: string;
-  alt: string;
+  id: string;
   src: {
-    original: string;
-    large2x: string;
-    large: string;
     medium: string;
-    small: string;
-    portrait: string;
-    landscape: string;
-    tiny: string;
   };
+  alt: string;
 }
 
 const useFetchPhotos = (query: string, page: number) => {
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchPhotos = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch(
-          `${BASE_URL}?query=${query}&page=${page}`,
-          {
-            headers: {
-              Authorization: API_KEY,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch photos");
+  const fetchPhotos = async (query: string, page: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `https://api.pexels.com/v1/search?query=${query}&page=${page}`,
+        {
+          headers: {
+            Authorization: API_KEY,
+          },
         }
+      );
 
-        const data = await response.json();
-        setPhotos([...photos, ...data.photos]);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred");
-        }
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch photos");
       }
-    };
 
-    fetchPhotos();
+      const data = await response.json();
+      setPhotos((prevPhotos) => [...prevPhotos, ...data.photos]);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPhotos(query, page);
   }, [query, page]);
 
   return { photos, loading, error };
