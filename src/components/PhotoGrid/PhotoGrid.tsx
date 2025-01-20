@@ -22,6 +22,8 @@ const GridItem = styled.div`
     object-fit: cover;
     min-width: 100%;
     min-height: 100%;
+    width: auto;
+    height: auto;
   }
 `;
 
