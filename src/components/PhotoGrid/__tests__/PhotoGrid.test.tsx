@@ -1,16 +1,15 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import PhotoGrid from './PhotoGrid';
-import useFetchPhotos from '../../apis/useFetchPhotos';
+import PhotoGrid from '../PhotoGrid';
+import useFetchPhotos from '../../../apis/useFetchPhotos';
 
-
-jest.mock('../apis/useFetchPhotos');
+jest.mock('../../../apis/useFetchPhotos');
 
 describe('PhotoGrid', () => {
   it('should render photos correctly', () => {
     const mockPhotos = [
-      { id: '1', src: { medium: 'photo1.jpg' }, alt: 'Photo 1' },
-      { id: '2', src: { medium: 'photo2.jpg' }, alt: 'Photo 2' },
+      { id: '1', src: { medium: 'https://pexels.com/photo/photo1.jpg' }, alt: 'Photo 1' },
+      { id: '2', src: { medium: 'https://pexels.com/photo/photo2.jpg' }, alt: 'Photo 2' },
     ];
     (useFetchPhotos as jest.Mock).mockReturnValue({ photos: mockPhotos });
 

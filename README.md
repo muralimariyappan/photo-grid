@@ -17,5 +17,11 @@ To run development server:
 bun dev
 ```
 
+To run test cases:
+
+```
+bun run test
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
