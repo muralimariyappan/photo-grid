@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import PhotoGrid from './PhotoGrid';
-import useFetchPhotos from '../apis/useFetchPhotos';
+import useFetchPhotos from '../../apis/useFetchPhotos';
 
 
 jest.mock('../apis/useFetchPhotos');

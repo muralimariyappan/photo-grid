@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-
-const API_KEY = process.env.REACT_APP_PEXELS_API_KEY as string;
+import { PEXELS_API_KEY } from "../config";
 
 export interface Photo {
   id: string;
@@ -23,7 +22,7 @@ const useFetchPhotos = (query: string, page: number) => {
         `https://api.pexels.com/v1/search?query=${query}&page=${page}`,
         {
           headers: {
-            Authorization: API_KEY,
+            Authorization: PEXELS_API_KEY,
           },
         }
       );
