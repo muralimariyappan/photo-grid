@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Photo } from "@/interfaces";
+import { rateLimit } from "@/utils/rateLimit";
 
 interface UseVirtualScrollProps {
   ref: React.RefObject<HTMLDivElement>;
@@ -19,8 +20,8 @@ const useVirtualScroll = (
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [totalHeight, setTotalHeight] = useState<number>(500);
   const [rowOffsetHeight, setRowOffsetHeight] = useState<number>(0);
-  const IMAGE_WIDTH = 216;
-  const IMAGE_HEIGHT = 216;
+  const IMAGE_WIDTH = 200;
+  const IMAGE_HEIGHT = 200;
 
   useEffect(() => {
     if (!ref.current) return;
@@ -45,19 +46,15 @@ const useVirtualScroll = (
       const startIndex =
         Math.floor(scrollTop / getChildHeight()) * numberOfColumns;
       const endIndex = rowCount * numberOfColumns + startIndex;
-      console.log("scrolling");
-      console.log(scrollTop);
-      console.log(numberOfColumns);
-      console.log(startIndex, endIndex);
       setPhotos(inputPhotos.slice(startIndex, endIndex));
       setRowOffsetHeight(
         Math.floor(startIndex / numberOfColumns) * getChildHeight()
       );
     };
 
-    const onScroll = (): void => {
+    const onScroll = rateLimit((): void => {
       updatePhotos();
-    };
+    }, 100);
 
     const updateHeight = (): void => {
       const numberOfColumns = Math.floor(
