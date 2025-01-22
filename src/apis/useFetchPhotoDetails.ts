@@ -1,33 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { PEXELS_API_KEY } from "../config";
+import { Photo } from "../interfaces";
 
 const BASE_URL = "https://api.pexels.com/v1/photos/";
 
-interface PhotoDetails {
-  id: number;
-  width: number;
-  height: number;
-  url: string;
-  photographer: string;
-  photographer_url: string;
-  alt: string;
-  src: {
-    original: string;
-    large2x: string;
-    large: string;
-    medium: string;
-    small: string;
-    portrait: string;
-    landscape: string;
-    tiny: string;
-  };
-}
-
 const useFetchPhotoDetails = (photoId: string | undefined) => {
-  const [photoDetails, setPhotoDetails] = useState<PhotoDetails | null>(null);
+  const [photoDetails, setPhotoDetails] = useState<Photo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const cache = useRef<{ [key: string]: PhotoDetails }>({});
+  const cache = useRef<{ [key: string]: Photo }>({});
 
   const fetchPhotoDetails = useCallback(async () => {
     if (!photoId) {
@@ -53,7 +34,7 @@ const useFetchPhotoDetails = (photoId: string | undefined) => {
         throw new Error("Failed to fetch photo details");
       }
 
-      const data: PhotoDetails = await response.json();
+      const data: Photo = await response.json();
       cache.current[cacheKey] = data;
       setPhotoDetails(data);
     } catch (err) {

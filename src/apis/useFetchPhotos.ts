@@ -1,13 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { PEXELS_API_KEY } from "../config";
-
-export interface Photo {
-  id: string;
-  src: {
-    medium: string;
-  };
-  alt: string;
-}
+import { Photo } from "../interfaces";
 
 const useFetchPhotos = (query: string, page: number) => {
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -27,7 +20,7 @@ const useFetchPhotos = (query: string, page: number) => {
     setError(null);
     try {
       const response = await fetch(
-        `https://api.pexels.com/v1/search?query=${query}&page=${page}`,
+        `https://api.pexels.com/v1/search?query=${query}&page=${page}&per_page=50`,
         {
           headers: {
             Authorization: PEXELS_API_KEY,
