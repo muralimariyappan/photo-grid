@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Photo } from "@/interfaces";
+import { IMAGE_HEIGHT, IMAGE_WIDTH } from "@/components/PhotoGrid/constants";
 
 interface UseVirtualScrollProps {
   ref: React.RefObject<HTMLDivElement>;
@@ -23,8 +24,6 @@ const useVirtualScroll = (
   const [rowOffsetHeight, setRowOffsetHeight] = useState<number>(0);
   // Using fixed image size of 200x200 to keep the math simple
   // Any change in css to include padding or margin would require a change here
-  const IMAGE_WIDTH = 200;
-  const IMAGE_HEIGHT = 200;
 
   const resetTotalHeight = (): void => {
     setTotalHeight(500);
