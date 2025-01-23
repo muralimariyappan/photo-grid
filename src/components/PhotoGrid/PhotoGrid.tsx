@@ -5,12 +5,11 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import Link from "next/link";
+
 import styled from "@emotion/styled";
-import Image from "next/image";
-import useFetchPhotos from "../../apis/useFetchPhotos";
-import { Photo } from "../../interfaces";
+import useFetchPhotos from "@/apis/useFetchPhotos";
 import useVirtualScroll from "@/components/PhotoGrid/hooks/useVirtualScroll";
+import PhotoGridItem from '@/components/PhotoGrid/components/PhotoGridItem';
 
 const Container = styled.div`
   height: 70vh;
@@ -32,22 +31,6 @@ const Grid = styled.div<GridProps>`
   padding-top: ${(props) => props.padding}px;
 `;
 
-const GridItem = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  max-height: 200px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  img {
-    object-fit: cover;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: 200px;
-  }
-`;
-
 const LoadingSpinner = styled.div`
   .loading {
     text-align: center;
@@ -66,7 +49,7 @@ const PhotoGrid: React.FC = () => {
   const {
     photos: virtualizedPhotos,
     totalHeight,
-    rowOffsetHeight,
+    rowOffsetHeight,    
   } = useVirtualScroll(ref, memoizedPhotos);
 
   const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
@@ -84,24 +67,16 @@ const PhotoGrid: React.FC = () => {
     };
     const observer = new IntersectionObserver(handleObserver, option);
     if (loader.current) observer.observe(loader.current);
-  }, [handleObserver]);
+  }, [handleObserver]);  
 
   return (
     <Container ref={ref}>
       <Grid height={totalHeight} padding={rowOffsetHeight}>
-        {(virtualizedPhotos as Photo[]).map((photo) => (
-          <Link key={photo.id} href={`/photo/${photo.id}`} passHref>
-            <GridItem key={photo.id}>
-              <Image
-                key={photo.id}
-                src={photo.src.medium}
-                alt={photo.alt}
-                width={200}
-                height={200}
-              />
-            </GridItem>
-          </Link>
-        ))}
+        {
+          virtualizedPhotos.map((photo) => (
+            <PhotoGridItem key={photo.id} photo={photo} />
+          ))
+        }                
         <LoadingSpinner ref={loader}>Loading...</LoadingSpinner>
       </Grid>
     </Container>
