@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PEXELS_API_KEY } from "../config";
+import { PEXELS_API, PEXELS_API_KEY } from "../config";
 import { Photo } from "../interfaces";
 
 const useFetchPhotos = (query: string, page: number) => {
@@ -10,9 +10,12 @@ const useFetchPhotos = (query: string, page: number) => {
   const fetchPhotos = async (query: string, page: number) => {
     setLoading(true);
     setError(null);
+    if (page === 1) {
+      setPhotos([]);
+    }
     try {
       const response = await fetch(
-        `https://api.pexels.com/v1/search?query=${query}&page=${page}&per_page=20`,
+        `${PEXELS_API}/v1/search?query=${query}&page=${page}&per_page=20`,
         {
           headers: {
             Authorization: PEXELS_API_KEY,

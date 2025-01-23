@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import useFetchPhotoDetails from "./useFetchPhotoDetails";
 
-// TODO: Update the test
+// More test cases need to be added
 test("useFetchPhotoDetails", () => {
   const { result } = renderHook(() => useFetchPhotoDetails("1234"));
   expect(result.current).toBeDefined();

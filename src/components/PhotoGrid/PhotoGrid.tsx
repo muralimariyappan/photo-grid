@@ -1,15 +1,10 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 
 import styled from "@emotion/styled";
 import useFetchPhotos from "@/apis/useFetchPhotos";
 import useVirtualScroll from "@/components/PhotoGrid/hooks/useVirtualScroll";
-import PhotoGridItem from '@/components/PhotoGrid/components/PhotoGridItem';
+import PhotoGridItem from "@/components/PhotoGrid/components/PhotoGridItem";
+import SearchComponent from "@/components/PhotoGrid/components/SearchComponent";
 
 const Container = styled.div`
   height: 70vh;
@@ -31,7 +26,7 @@ const Grid = styled.div<GridProps>`
   padding-top: ${(props) => props.padding}px;
 `;
 
-const LoadingSpinner = styled.div`
+const LoadMore = styled.div`
   .loading {
     text-align: center;
     padding: 16px;
@@ -39,18 +34,33 @@ const LoadingSpinner = styled.div`
   }
 `;
 
+const CenterText = styled.div`
+  text-align: center;
+  padding: 16px;
+`;
+
 const PhotoGrid: React.FC = () => {
   const [page, setPage] = useState(1);
-  const { photos } = useFetchPhotos("nature", page);
+  const [query, setQuery] = useState("nature");
+  const { photos, loading } = useFetchPhotos(query, page);
   const loader = useRef<HTMLDivElement | null>(null);
-
-  const memoizedPhotos = useMemo(() => photos, [photos]);
   const ref = useRef<HTMLDivElement>(null!);
+
   const {
     photos: virtualizedPhotos,
     totalHeight,
-    rowOffsetHeight,    
-  } = useVirtualScroll(ref, memoizedPhotos);
+    rowOffsetHeight,
+    resetRowOffsetHeight,
+    resetTotalHeight,
+  } = useVirtualScroll(ref, photos);
+
+  const onSearch = (query: string) => {
+    setPage(1);
+    setQuery(query);
+    ref.current.scrollTo(0, 0);
+    resetRowOffsetHeight();
+    resetTotalHeight();
+  };
 
   const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
     const target = entries[0];
@@ -67,19 +77,33 @@ const PhotoGrid: React.FC = () => {
     };
     const observer = new IntersectionObserver(handleObserver, option);
     if (loader.current) observer.observe(loader.current);
-  }, [handleObserver]);  
+  }, [handleObserver]);
+
+  // This can be included directly in the return function so react keeps track of the list and will update only the required changes
+  // But, there was a weird bug where a particular image is repeated but it is not present in virtualizedPhotos
+  // Only in the dom it appears.  I couldn't figure out the reason for this.
+  // Because this re-renders the whole virutalized list on every change, it is not efficient
+  const ImagesList = () => {
+    return virtualizedPhotos.map((photo) => (
+      <PhotoGridItem key={photo.id} photo={photo} />
+    ));
+  };
+
+  console.log(virtualizedPhotos);
 
   return (
-    <Container ref={ref}>
-      <Grid height={totalHeight} padding={rowOffsetHeight}>
-        {
-          virtualizedPhotos.map((photo) => (
-            <PhotoGridItem key={photo.id} photo={photo} />
-          ))
-        }                
-        <LoadingSpinner ref={loader}>Loading...</LoadingSpinner>
-      </Grid>
-    </Container>
+    <div>
+      <SearchComponent onSearch={onSearch} placeholder={query} />      
+      {virtualizedPhotos.length === 0 && !loading && (
+        <CenterText>No photos found!</CenterText>
+      )}
+      <Container ref={ref}>
+        <Grid height={totalHeight} padding={rowOffsetHeight}>
+          <ImagesList />
+          <LoadMore ref={loader}>Loading...</LoadMore>
+        </Grid>
+      </Container>
+    </div>
   );
 };
 

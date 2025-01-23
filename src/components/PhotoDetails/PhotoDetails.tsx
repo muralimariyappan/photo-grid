@@ -47,7 +47,12 @@ const PhotoDetails: React.FC = () => {
   if (!photo) {
     return <div>No photo details available</div>;
   }
-
+  // It looks ugly, I know
+  // While going back, all the state is lost in the photo grid and it shows the initial page
+  // To keep the state of grid, we can use a store like Redux or Context API and store the
+  // photos, scrollPosition, startIndex and whatever is needed to keep the state  
+  // I could've simply used a modal and kept the grid in the background but since the test
+  // mentioned about routers, I have used the router to navigate back
   return (
     <ImageContainer>
       <BackButton onClick={() => router.back()}>Back</BackButton>

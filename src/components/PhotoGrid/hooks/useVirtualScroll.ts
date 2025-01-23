@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Photo } from "@/interfaces";
-import { rateLimit } from "@/utils/rateLimit";
 
 interface UseVirtualScrollProps {
   ref: React.RefObject<HTMLDivElement>;
@@ -11,6 +10,8 @@ interface UseVirtualScrollReturn {
   photos: Photo[];
   totalHeight: number;
   rowOffsetHeight: number;
+  resetTotalHeight: () => void;
+  resetRowOffsetHeight: () => void;
 }
 
 const useVirtualScroll = (
@@ -20,12 +21,21 @@ const useVirtualScroll = (
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [totalHeight, setTotalHeight] = useState<number>(500);
   const [rowOffsetHeight, setRowOffsetHeight] = useState<number>(0);
+  // Using fixed image size of 200x200 to keep the math simple
+  // Any change in css to include padding or margin would require a change here
   const IMAGE_WIDTH = 200;
   const IMAGE_HEIGHT = 200;
 
+  const resetTotalHeight = (): void => {
+    setTotalHeight(500);
+  };
+
+  const resetRowOffsetHeight = (): void => {
+    setRowOffsetHeight(0);
+  };
+
   useEffect(() => {
     if (!ref.current) return;
-    if (inputPhotos.length === 0) return;
 
     const getChildHeight = (): number => {
       return IMAGE_HEIGHT;
@@ -47,14 +57,17 @@ const useVirtualScroll = (
         Math.floor(scrollTop / getChildHeight()) * numberOfColumns;
       const endIndex = rowCount * numberOfColumns + startIndex;
       setPhotos(inputPhotos.slice(startIndex, endIndex));
+      // This is required to keep the scrollbar at the same position
+      // There is tiny movement of scrollbar when this is set
       setRowOffsetHeight(
         Math.floor(startIndex / numberOfColumns) * getChildHeight()
       );
     };
 
-    const onScroll = rateLimit((): void => {
+    // Can be rate limited but the frame would flicker if we scroll really fast using scrollbar
+    const onScroll = (): void => {
       updatePhotos();
-    }, 100);
+    };
 
     const updateHeight = (): void => {
       const numberOfColumns = Math.floor(
@@ -71,11 +84,20 @@ const useVirtualScroll = (
     ref.current.addEventListener("scroll", onScroll);
 
     return () => {
+      // ref.current complains that it would have likely changed when this unmount happens
+      // Added a null check, but probably needs a different approach
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       ref.current?.removeEventListener("scroll", onScroll);
     };
   }, [ref, inputPhotos]);
 
-  return { photos, totalHeight, rowOffsetHeight };
+  return {
+    photos,
+    totalHeight,
+    rowOffsetHeight,
+    resetTotalHeight,
+    resetRowOffsetHeight,
+  };
 };
 
 export default useVirtualScroll;

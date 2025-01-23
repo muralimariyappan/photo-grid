@@ -1,30 +1,21 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { PEXELS_API_KEY } from "../config";
+import { useState, useEffect, useCallback } from "react";
+import { PEXELS_API, PEXELS_API_KEY } from "../config";
 import { Photo } from "../interfaces";
-
-const BASE_URL = "https://api.pexels.com/v1/photos/";
 
 const useFetchPhotoDetails = (photoId: string | undefined) => {
   const [photoDetails, setPhotoDetails] = useState<Photo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const cache = useRef<{ [key: string]: Photo }>({});
 
   const fetchPhotoDetails = useCallback(async () => {
     if (!photoId) {
       return;
     }
 
-    const cacheKey = photoId;
-    if (cache.current[cacheKey]) {
-      setPhotoDetails(cache.current[cacheKey]);
-      return;
-    }
-
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${BASE_URL}${photoId}`, {
+      const response = await fetch(`${PEXELS_API}/v1/photos/${photoId}`, {
         headers: {
           Authorization: PEXELS_API_KEY,
         },
@@ -35,7 +26,7 @@ const useFetchPhotoDetails = (photoId: string | undefined) => {
       }
 
       const data: Photo = await response.json();
-      cache.current[cacheKey] = data;
+      // Tried caching the response but it didn't make any difference
       setPhotoDetails(data);
     } catch (err) {
       if (err instanceof Error) {
