@@ -87,9 +87,7 @@ const PhotoGrid: React.FC = () => {
     return virtualizedPhotos.map((photo) => (
       <PhotoGridItem key={photo.id} photo={photo} />
     ));
-  };
-
-  console.log(virtualizedPhotos);
+  };  
 
   return (
     <div>

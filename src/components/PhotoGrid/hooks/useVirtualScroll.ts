@@ -60,7 +60,7 @@ const useVirtualScroll = (
       // This is required to keep the scrollbar at the same position
       // There is tiny movement of scrollbar when this is set
       setRowOffsetHeight(
-        Math.floor(startIndex / numberOfColumns) * getChildHeight()
+        Math.floor(startIndex / numberOfColumns) * getChildHeight() || 0
       );
     };
 
@@ -75,7 +75,7 @@ const useVirtualScroll = (
       );
       const totalRows = Math.ceil(inputPhotos.length / numberOfColumns);
 
-      setTotalHeight(totalRows * getChildHeight());
+      setTotalHeight(totalRows * getChildHeight() || 0);
     };
 
     updatePhotos();
