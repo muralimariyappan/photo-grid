@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styled from "@emotion/styled";
 import { Photo } from "@/interfaces";
-import React from 'react';
+import React from "react";
 
 const GridItem = styled.div`
   display: flex;
@@ -25,19 +25,19 @@ interface PhotoGridItemProps {
 }
 
 const PhotoGridItem: React.FC<PhotoGridItemProps> = ({ photo }) => {
-    return (
-        <Link href={`/photo/${photo.id}`} passHref>
-            <GridItem key={photo.id}>
-                <Image
-                    key={photo.id}
-                    src={photo.src.medium}
-                    alt={photo.alt}
-                    width={200}
-                    height={200}
-                />
-            </GridItem>
-        </Link>
-    );
+  return (
+    <Link href={`/photo/${photo.id}`} passHref>
+      <GridItem key={photo.id}>
+        <Image
+          key={photo.id}
+          src={photo.src.medium}
+          alt={photo.alt}
+          width={100}
+          height={100}          
+        />
+      </GridItem>
+    </Link>
+  );
 };
 
 export default React.memo(PhotoGridItem);

@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import HomePage from '../pages/index'
  
 describe('Page', () => {
-  it('renders a heading', () => {
+  it('should render heading for the page', () => {
     render(<HomePage />)
  
     const heading = screen.getByRole('heading', { name: "Photo Gallery" })

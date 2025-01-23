@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import useFetchPhotoDetails from "../../apis/useFetchPhotoDetails";
+import useFetchPhotoDetails from "@/apis/useFetchPhotoDetails";
 import styled from "@emotion/styled";
 
 const ImageContainer = styled.div`
