@@ -5,6 +5,7 @@ import useFetchPhotos from "@/apis/useFetchPhotos";
 import useVirtualScroll from "@/components/PhotoGrid/hooks/useVirtualScroll";
 import PhotoGridItem from "@/components/PhotoGrid/components/PhotoGridItem";
 import SearchComponent from "@/components/PhotoGrid/components/SearchComponent";
+import { IMAGE_HEIGHT } from '@/components/PhotoGrid/constants';
 
 const Container = styled.div`
   height: 70vh;
@@ -19,7 +20,7 @@ interface GridProps {
 
 const Grid = styled.div<GridProps>`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(${IMAGE_HEIGHT}px, 1fr));
   overflow-y: scroll;
   align-content: start;
   height: ${(props) => props.height}px;
@@ -87,11 +88,11 @@ const PhotoGrid: React.FC = () => {
     return virtualizedPhotos.map((photo) => (
       <PhotoGridItem key={photo.id} photo={photo} />
     ));
-  };  
+  };
 
   return (
     <div>
-      <SearchComponent onSearch={onSearch} placeholder={query} />      
+      <SearchComponent onSearch={onSearch} placeholder={query} />
       {virtualizedPhotos.length === 0 && !loading && (
         <CenterText>No photos found!</CenterText>
       )}
